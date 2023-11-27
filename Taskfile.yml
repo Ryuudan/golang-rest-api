@@ -1,0 +1,49 @@
+version: "3"
+dotenv: [".env"]
+
+tasks:
+  dev:
+    cmds:
+      - air
+  format:
+    cmds:
+      - go fmt ./...
+  tidy:
+    cmds:
+      - go mod tidy
+  build:
+    cmds:
+      - go build -o app ./cmd
+  docker:up:
+    cmds:
+      - docker compose up -d
+  docker:down:
+    cmds:
+      - docker compose down
+  ent:new:
+    cmds:
+      - go run -mod=mod entgo.io/ent/cmd/ent new {{.name}}
+  migrate:lint:
+    cmds:
+      - atlas migrate lint --dir "file://src/database/migrations" --dev-url "$POSTGRES_CONNECTION_STRING" --latest 1
+  migrate:hash:
+    cmds:
+      - atlas migrate hash --dir "file://src/database/migrations"
+  migrate:new:
+    desc: Create new migration file
+    cmds:
+      - atlas migrate new {{.name}} --dir "file://src/database/migrations"
+  migrate:status:
+    desc: Run database migration
+    cmds:
+      - atlas migrate status --dir "file://src/database/migrations" --url "$POSTGRES_CONNECTION_STRING"
+  migrate:apply:
+    desc: Run database migrations
+    cmds:
+      - atlas migrate apply --dir "file://src/database/migrations" --url "$POSTGRES_CONNECTION_STRING"
+  generate:
+    desc: Runs all //go:generate commands embedded in .go files
+    cmds:
+      - go generate ./...
+  # TODOs
+  # Swagger DOCS
